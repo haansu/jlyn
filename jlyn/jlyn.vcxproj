@@ -146,9 +146,9 @@
     <ClInclude Include="src\SFML.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Log\Log.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Core\Program.cpp" />
+    <ClCompile Include="src\Log\Log.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
