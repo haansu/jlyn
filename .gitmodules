@@ -1,0 +1,3 @@
+[submodule "jlyn/vendor/spdlog"]
+	path = jlyn/vendor/spdlog
+	url = https://github.com/gabime/spdlog/

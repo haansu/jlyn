@@ -1,9 +1,11 @@
 #pragma once
 
 #include <SFML.h>
+#include <JLynCore.h>
 
 namespace jlyn {
-
+	
+	// Takes care of running the application and the window
 	class Program {
 	public:
 		Program();			
@@ -13,7 +15,6 @@ namespace jlyn {
 		void Run();
 
 		void Update();
-
 		void Render();
 	private:
 		std::string m_Title;

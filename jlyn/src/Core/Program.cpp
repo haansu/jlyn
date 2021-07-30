@@ -1,6 +1,7 @@
 #include "Program.h"
 
 namespace jlyn {
+
 	Program::Program()
 		: m_Title("JLyn"), m_Resizeable(false) {
 		m_VideoMode.width   = 1280;
@@ -24,26 +25,42 @@ namespace jlyn {
 		delete m_Window;
 	}
 
-
-
 	void Program::Run() {
 		while (m_Window->isOpen()) {
 			while (m_Window->pollEvent(m_Event)) {
 				switch (m_Event.type) {
-				case sf::Event::Closed:
-					m_Window->close();
-					break;
-				case sf::Event::KeyPressed:
-					if (m_Event.key.code == sf::Keyboard::Escape)
+					case sf::Event::Closed: {
 						m_Window->close();
-					break;
+						CORE_INFO("Window closed!");
+						break;
+					}
+					case sf::Event::KeyPressed: {
+						CORE_TRACE("Key pressed: {0}", m_Event.text.unicode);
+						if (m_Event.key.code == sf::Keyboard::Escape) {
+							m_Window->close();
+							CORE_INFO("Window closed!");
+						}
+						break;
+					}
 				}
 			}
 
+			Update();
+
 			m_Window->clear(sf::Color(55, 55, 55, 255));
+
+			Render();
 
 			m_Window->display();
 		}
+	}
+
+	void Program::Update() {
+
+	}
+
+	void Program::Render() {
+
 	}
 
 }

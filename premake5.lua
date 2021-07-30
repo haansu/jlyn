@@ -27,7 +27,8 @@ project "jlyn"
 
 	includedirs {
 		"jlyn/src",
-		"jlyn/vendor/SFML/include"
+		"jlyn/vendor/SFML/include",
+		"jlyn/vendor/spdlog/include/"
 	}
 
 	libdirs {
