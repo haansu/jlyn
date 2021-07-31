@@ -8,6 +8,8 @@
 #include <vector>
 #include <string_view>
 
+#include <thread>
+
 namespace jlyn {
 	
 	// Takes care of running the application and the window
@@ -17,8 +19,10 @@ namespace jlyn {
 		~Program();
 
 		void Run();
-
+		void CheckEvents();
+		
 		void InitObjects();
+		void ScanDirectory(std::string _directory);
 		bool IsSupported(std::filesystem::directory_entry _files);
 
 		void ImageRenderer(std::string _path);
@@ -42,6 +46,9 @@ namespace jlyn {
 
 		sf::Sprite* m_Image;
 		sf::Texture m_Texture;
+
+		sf::Texture* m_LeftButtonTexture;
+		sf::Texture* m_RightButtonTexture;
 	};
 
 }

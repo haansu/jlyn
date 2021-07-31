@@ -8,52 +8,114 @@ namespace jlyn {
 		m_VideoMode.height = _height;
 		m_PathIndex = 0;
 
+		m_LeftButtonTexture = new sf::Texture;
+		m_RightButtonTexture = new sf::Texture;
+
 		if (_resizeable)
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
 		else
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close);
 
-		m_Window->setFramerateLimit(60);
+		m_Window->setFramerateLimit(30);
 
 		m_View = m_Window->getDefaultView();
 		InitObjects();
 
-		// Move to it's own function + make able to read from any folder (+folder that the exe opens in)
-		for (auto& files : std::filesystem::directory_iterator("Textures")) {
-			if (IsSupported(files)) {
-				m_FilePaths.push_back(files.path().string());
-				CORE_TRACE("File path added: {0}", m_FilePaths[m_FilePaths.size() - 1]);
-			}
-		}
-
-		CORE_INFO("{0} supported files have been found in the folder!", m_FilePaths.size());
+		// Later to be changed to arguements on program start
+		ScanDirectory("Textures");
 
 		ImageRenderer(m_FilePaths[m_PathIndex]);
-
 	}
 
 	Program::~Program() {
 		delete m_Window;
 		delete m_Image;
+		delete m_LeftButtonTexture;
+		delete m_RightButtonTexture;
 	}
 
-	// This may lead to memory leaks!!!
+	void Program::Run() {
+		while (m_Window->isOpen()) {
+			CheckEvents();
+			Update();
+
+			m_Window->clear(sf::Color(55, 55, 55, 255));
+
+			Render();
+
+			m_Window->display();
+		}
+	}
+
+	void Program::CheckEvents() {
+		while (m_Window->pollEvent(m_Event)) {
+			switch (m_Event.type) {
+				case sf::Event::Closed: {
+					m_Window->close();
+					CORE_INFO("Window closed!");
+					break;
+				}
+
+				case sf::Event::KeyPressed: {
+					CORE_TRACE("Key pressed: {0}", m_Event.text.unicode);
+					if (m_Event.key.code == sf::Keyboard::Escape) {
+						m_Window->close();
+						CORE_INFO("Window closed!");
+					}
+
+					if (m_Event.key.code == sf::Keyboard::Left) {
+						if (m_PathIndex > 0) {
+							ImageRenderer(m_FilePaths[m_PathIndex - 1]);
+							m_PathIndex--;
+						}
+					}
+
+					if (m_Event.key.code == sf::Keyboard::Right) {
+						if (m_PathIndex < m_FilePaths.size() - 1) {
+							ImageRenderer(m_FilePaths[m_PathIndex + 1]);
+							m_PathIndex++;
+						}
+					}
+					break;
+				}
+
+				case sf::Event::Resized: {
+
+					CORE_INFO("Window: w: {0} h: {1}", m_Window->getSize().x, m_Window->getSize().y);
+
+					if (m_Window->getSize().x < 800)
+						m_Window->setSize(sf::Vector2u(800, m_Event.size.height));
+
+					if (m_Window->getSize().y < 600)
+						m_Window->setSize(sf::Vector2u(m_Event.size.width, 600));
+
+					m_View.setSize({
+						static_cast<float>(m_Event.size.width),
+						static_cast<float>(m_Event.size.height)
+						});
+
+					m_Window->setView(m_View);
+
+					ImageRenderer(m_FilePaths[m_PathIndex]);
+				}
+			}
+		}
+	}
+
 	void Program::InitObjects() {
 		// Left arrow button
 		m_ButtonPrev.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonPrev.setPosition(sf::Vector2f(0.0f, 0.0f));
 		m_ButtonPrev.setFillColor(sf::Color(255, 255, 255, 255));
-		
+
 		sf::Image buttonImg;
-		sf::Texture* buttonTexture;
 
 		CORE_INFO("Image loading arrow_left...");
 		if (!(buttonImg.loadFromFile("sprites/arrow_left.png")))
 			CORE_ERROR("Cannot load left_arrow from: {0}", "sprites/arrow_left.png");
 
-		buttonTexture = new sf::Texture;
-		buttonTexture->loadFromImage(buttonImg);
-		m_ButtonPrev.setTexture(buttonTexture);
+		m_LeftButtonTexture->loadFromImage(buttonImg);
+		m_ButtonPrev.setTexture(m_LeftButtonTexture);
 
 		// Right arrow button
 		m_ButtonNext.setSize(sf::Vector2f(100.0f, 100.0f));
@@ -64,9 +126,19 @@ namespace jlyn {
 		if (!(buttonImg.loadFromFile("sprites/arrow_right.png")))
 			CORE_ERROR("Cannot load left_arrow from: {0}", "sprites/arrow_right.png");
 
-		buttonTexture = new sf::Texture;
-		buttonTexture->loadFromImage(buttonImg);
-		m_ButtonNext.setTexture(buttonTexture);
+		m_RightButtonTexture->loadFromImage(buttonImg);
+		m_ButtonNext.setTexture(m_RightButtonTexture);
+	}
+
+	void Program::ScanDirectory(std::string _directory) {
+		for (auto& files : std::filesystem::directory_iterator(_directory)) {
+			if (IsSupported(files)) {
+				m_FilePaths.push_back(files.path().string());
+				CORE_TRACE("File path added: {0}", m_FilePaths[m_FilePaths.size() - 1]);
+			}
+		}
+
+		CORE_INFO("{0} supported files have been found in the folder!", m_FilePaths.size());
 	}
 
 	bool Program::IsSupported(std::filesystem::directory_entry _files) {
@@ -92,72 +164,11 @@ namespace jlyn {
 		return false;
 	}
 
-	void Program::Run() {
-		while (m_Window->isOpen()) {
-			while (m_Window->pollEvent(m_Event)) {
-				switch (m_Event.type) {
-					case sf::Event::Closed: {
-						m_Window->close();
-						CORE_INFO("Window closed!");
-						break;
-					}
-					case sf::Event::KeyPressed: {
-						CORE_TRACE("Key pressed: {0}", m_Event.text.unicode);
-						if (m_Event.key.code == sf::Keyboard::Escape) {
-							m_Window->close();
-							CORE_INFO("Window closed!");
-						}
-
-						if (m_Event.key.code == sf::Keyboard::Left) {
-							if (m_PathIndex > 0) {
-								ImageRenderer(m_FilePaths[m_PathIndex - 1]);
-								m_PathIndex--;
-							}
-						}
-
-						if (m_Event.key.code == sf::Keyboard::Right) {
-							if (m_PathIndex < m_FilePaths.size() - 1) {
-								ImageRenderer(m_FilePaths[m_PathIndex + 1]);
-								m_PathIndex++;
-							}
-						}
-						break;
-					}
-					case sf::Event::Resized: {
-
-						if (m_Window->getSize().x < 800)
-							m_Window->setSize(sf::Vector2u(800, m_Event.size.height));
-
-						if (m_Window->getSize().y < 600)
-							m_Window->setSize(sf::Vector2u(m_Event.size.width, 600));
-						
-						m_View.setSize({
-							static_cast<float>(m_Event.size.width),
-							static_cast<float>(m_Event.size.height)
-						});
-
-						m_Window->setView(m_View);
-
-						ImageRenderer(m_FilePaths[m_PathIndex]);
-					}
-				}
-			}
-
-			Update();
-
-			m_Window->clear(sf::Color(55, 55, 55, 255));
-
-			Render();
-
-			m_Window->display();
-		}
-	}
-
-	// Needs to be initialised and changed when button click rather than every frame
 	void Program::ImageRenderer(std::string _path) {
 		CORE_TRACE("Loading immage from path: {0}", _path);
 
 		delete m_Image;
+
 		m_Image = new sf::Sprite;
 
 		sf::Image image;
