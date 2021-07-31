@@ -2,29 +2,31 @@
 
 namespace jlyn {
 
-	Program::Program()
-		: m_Title("JLyn"), m_Resizeable(false) {
-		m_VideoMode.width   = 1280;
-		m_VideoMode.height	= 720;
-
-		m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close);	
-
-		m_View = m_Window->getDefaultView();
-		InitObjects();
-	}
-
 	Program::Program(unsigned int _width, unsigned int _height, std::string _title, bool _resizeable)
 		: m_Title(_title), m_Resizeable(_resizeable) {
-		m_VideoMode.width	= _width;
-		m_VideoMode.height	= _height;
+		m_VideoMode.width = _width;
+		m_VideoMode.height = _height;
 
 		if (_resizeable)
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
 		else
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close);
-		
+
 		m_View = m_Window->getDefaultView();
 		InitObjects();
+
+		// Move to it's own function + make able to read from any folder (+folder that the exe opens in)
+		for (auto& files : std::filesystem::directory_iterator("Textures")) {
+			if (IsSupported(files)) {
+				m_FilePaths.push_back(files.path().string());
+				CORE_TRACE("File path added: {0}", m_FilePaths[m_FilePaths.size() - 1]);
+			}
+		}
+
+		CORE_INFO("{0} supported files have been found in the folder!", m_FilePaths.size());
+
+		ImageRenderer(m_FilePaths[0]);
+
 	}
 
 	Program::~Program() {
@@ -39,6 +41,28 @@ namespace jlyn {
 		m_ButtonNext.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonNext.setPosition(sf::Vector2f(0.0f, 0.0f));
 		m_ButtonNext.setFillColor(sf::Color::Red);
+	}
+
+	bool Program::IsSupported(std::filesystem::directory_entry _files) {
+		std::string supFormats[8];
+
+		// Supported formats
+		supFormats[0] = ".png";
+		supFormats[1] = ".jpg";
+		supFormats[2] = ".bmp";
+		supFormats[3] = ".gif";
+		supFormats[4] = ".psd";
+		supFormats[5] = ".hdr";
+		supFormats[6] = ".pic";
+		supFormats[7] = ".tga";
+
+		std::string path = _files.path().string();
+
+		for (int i = 0; i < 8; i++)
+			if (path.size() >= supFormats[i].size() && 0 == path.compare(path.size() - supFormats[i].size(), supFormats[i].size(), supFormats[i]))
+				return true;
+
+		return false;
 	}
 
 	void Program::Run() {
@@ -59,25 +83,16 @@ namespace jlyn {
 						break;
 					}
 					case sf::Event::Resized: {
-						m_View.setSize({
-							static_cast<float>(m_Event.size.width),
-							static_cast<float>(m_Event.size.height)
-						});
 
 						if (m_Window->getSize().x < 800)
 							m_Window->setSize(sf::Vector2u(800, m_Event.size.height));
 
-							m_View.setSize({
-							800.0f,
-							static_cast<float>(m_Event.size.height)
-						});
-
 						if (m_Window->getSize().y < 600)
 							m_Window->setSize(sf::Vector2u(m_Event.size.width, 600));
-
-							m_View.setSize({
+						
+						m_View.setSize({
 							static_cast<float>(m_Event.size.width),
-							600.0f
+							static_cast<float>(m_Event.size.height)
 						});
 
 						m_Window->setView(m_View);
@@ -95,6 +110,18 @@ namespace jlyn {
 		}
 	}
 
+	// Needs to be initialised and changed when button click rather than every frame
+	void Program::ImageRenderer(std::string _path) {
+		CORE_TRACE("Loading immage from path: {0}", _path);
+		sf::Image image;
+		if (!(image.loadFromFile(_path)))
+			CORE_ERROR("Cannot load image from: {0}", _path);
+
+		m_Texture.loadFromImage(image);
+		m_Image.setTexture(m_Texture);
+		m_Image.setScale(1, 1);
+	}
+
 	void Program::Update() {
 		sf::Vector2f buttonPrevPos;
 		buttonPrevPos.x = 0;
@@ -104,12 +131,12 @@ namespace jlyn {
 		buttonNextPos.x = m_Window->getSize().x - m_ButtonNext.getSize().x;
 		buttonNextPos.y = m_Window->getSize().y / 2 - m_ButtonNext.getSize().y / 2;
 
-
 		m_ButtonPrev.setPosition(m_Window->mapPixelToCoords(sf::Vector2i{ buttonPrevPos }));
 		m_ButtonNext.setPosition(m_Window->mapPixelToCoords(sf::Vector2i{ buttonNextPos }));
 	}
 	
 	void Program::Render() {
+		m_Window->draw(m_Image);
 		m_Window->draw(m_ButtonPrev);
 		m_Window->draw(m_ButtonNext);
 	}
