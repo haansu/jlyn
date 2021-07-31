@@ -8,8 +8,6 @@
 #include <vector>
 #include <string_view>
 
-#include <thread>
-
 namespace jlyn {
 	
 	// Takes care of running the application and the window
