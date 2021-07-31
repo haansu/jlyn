@@ -25,7 +25,7 @@ namespace jlyn {
 
 		CORE_INFO("{0} supported files have been found in the folder!", m_FilePaths.size());
 
-		ImageRenderer(m_FilePaths[0]);
+		ImageRenderer(m_FilePaths[1]);
 
 	}
 
@@ -58,6 +58,7 @@ namespace jlyn {
 
 		std::string path = _files.path().string();
 
+		// Checks if the path ends in any of the supported formats
 		for (int i = 0; i < 8; i++)
 			if (path.size() >= supFormats[i].size() && 0 == path.compare(path.size() - supFormats[i].size(), supFormats[i].size(), supFormats[i]))
 				return true;
@@ -119,7 +120,13 @@ namespace jlyn {
 
 		m_Texture.loadFromImage(image);
 		m_Image.setTexture(m_Texture);
-		m_Image.setScale(1, 1);
+		float scaleX = static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x);
+		float scaleY = static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y);
+
+		if (scaleX < scaleY)
+			m_Image.setScale(scaleX, scaleX);
+		else
+			m_Image.setScale(scaleY, scaleY);
 	}
 
 	void Program::Update() {
