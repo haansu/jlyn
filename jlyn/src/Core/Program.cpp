@@ -37,14 +37,36 @@ namespace jlyn {
 		delete m_Image;
 	}
 
+	// This may lead to memory leaks!!!
 	void Program::InitObjects() {
+		// Left arrow button
 		m_ButtonPrev.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonPrev.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonPrev.setFillColor(sf::Color(255, 0, 0, 180));
+		m_ButtonPrev.setFillColor(sf::Color(255, 255, 255, 255));
+		
+		sf::Image buttonImg;
+		sf::Texture* buttonTexture;
 
+		CORE_INFO("Image loading arrow_left...");
+		if (!(buttonImg.loadFromFile("sprites/arrow_left.png")))
+			CORE_ERROR("Cannot load left_arrow from: {0}", "sprites/arrow_left.png");
+
+		buttonTexture = new sf::Texture;
+		buttonTexture->loadFromImage(buttonImg);
+		m_ButtonPrev.setTexture(buttonTexture);
+
+		// Right arrow button
 		m_ButtonNext.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonNext.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonNext.setFillColor(sf::Color(255, 0, 0, 180));
+		m_ButtonNext.setFillColor(sf::Color(255, 255, 255, 255));
+
+		CORE_INFO("Image loading arrow_right...");
+		if (!(buttonImg.loadFromFile("sprites/arrow_right.png")))
+			CORE_ERROR("Cannot load left_arrow from: {0}", "sprites/arrow_right.png");
+
+		buttonTexture = new sf::Texture;
+		buttonTexture->loadFromImage(buttonImg);
+		m_ButtonNext.setTexture(buttonTexture);
 	}
 
 	bool Program::IsSupported(std::filesystem::directory_entry _files) {
@@ -115,6 +137,8 @@ namespace jlyn {
 						});
 
 						m_Window->setView(m_View);
+
+						ImageRenderer(m_FilePaths[m_PathIndex]);
 					}
 				}
 			}
@@ -141,8 +165,8 @@ namespace jlyn {
 		if (!(image.loadFromFile(_path)))
 			CORE_ERROR("Cannot load image from: {0}", _path);
 
-		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.9f;
-		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.9f;
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.95f;
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.95f;
 		
 		if (scaleX < scaleY)
 			m_Image->setScale(scaleX, scaleX);
