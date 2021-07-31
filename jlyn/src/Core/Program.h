@@ -30,6 +30,7 @@ namespace jlyn {
 		bool m_Resizeable;
 
 		std::vector<std::string> m_FilePaths;
+		unsigned int m_PathIndex;
 
 		sf::RenderWindow* m_Window;
 		sf::VideoMode m_VideoMode;
@@ -39,7 +40,7 @@ namespace jlyn {
 		sf::RectangleShape m_ButtonPrev;
 		sf::RectangleShape m_ButtonNext;
 
-		sf::Sprite m_Image;
+		sf::Sprite* m_Image;
 		sf::Texture m_Texture;
 	};
 

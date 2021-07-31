@@ -6,11 +6,14 @@ namespace jlyn {
 		: m_Title(_title), m_Resizeable(_resizeable) {
 		m_VideoMode.width = _width;
 		m_VideoMode.height = _height;
+		m_PathIndex = 0;
 
 		if (_resizeable)
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
 		else
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close);
+
+		m_Window->setFramerateLimit(60);
 
 		m_View = m_Window->getDefaultView();
 		InitObjects();
@@ -25,22 +28,23 @@ namespace jlyn {
 
 		CORE_INFO("{0} supported files have been found in the folder!", m_FilePaths.size());
 
-		ImageRenderer(m_FilePaths[1]);
+		ImageRenderer(m_FilePaths[m_PathIndex]);
 
 	}
 
 	Program::~Program() {
 		delete m_Window;
+		delete m_Image;
 	}
 
 	void Program::InitObjects() {
 		m_ButtonPrev.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonPrev.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonPrev.setFillColor(sf::Color::Red);
+		m_ButtonPrev.setFillColor(sf::Color(255, 0, 0, 180));
 
 		m_ButtonNext.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonNext.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonNext.setFillColor(sf::Color::Red);
+		m_ButtonNext.setFillColor(sf::Color(255, 0, 0, 180));
 	}
 
 	bool Program::IsSupported(std::filesystem::directory_entry _files) {
@@ -81,6 +85,20 @@ namespace jlyn {
 							m_Window->close();
 							CORE_INFO("Window closed!");
 						}
+
+						if (m_Event.key.code == sf::Keyboard::Left) {
+							if (m_PathIndex > 0) {
+								ImageRenderer(m_FilePaths[m_PathIndex - 1]);
+								m_PathIndex--;
+							}
+						}
+
+						if (m_Event.key.code == sf::Keyboard::Right) {
+							if (m_PathIndex < m_FilePaths.size() - 1) {
+								ImageRenderer(m_FilePaths[m_PathIndex + 1]);
+								m_PathIndex++;
+							}
+						}
 						break;
 					}
 					case sf::Event::Resized: {
@@ -114,19 +132,25 @@ namespace jlyn {
 	// Needs to be initialised and changed when button click rather than every frame
 	void Program::ImageRenderer(std::string _path) {
 		CORE_TRACE("Loading immage from path: {0}", _path);
+
+		
+		delete m_Image;
+		m_Image = new sf::Sprite;
+
 		sf::Image image;
 		if (!(image.loadFromFile(_path)))
 			CORE_ERROR("Cannot load image from: {0}", _path);
 
-		m_Texture.loadFromImage(image);
-		m_Image.setTexture(m_Texture);
-		float scaleX = static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x);
-		float scaleY = static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y);
-
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x));
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y));
+		
 		if (scaleX < scaleY)
-			m_Image.setScale(scaleX, scaleX);
+			m_Image->setScale(scaleX, scaleX);
 		else
-			m_Image.setScale(scaleY, scaleY);
+			m_Image->setScale(scaleY, scaleY);
+
+		m_Texture.loadFromImage(image);
+		m_Image->setTexture(m_Texture);
 	}
 
 	void Program::Update() {
@@ -143,7 +167,7 @@ namespace jlyn {
 	}
 	
 	void Program::Render() {
-		m_Window->draw(m_Image);
+		m_Window->draw(*m_Image);
 		m_Window->draw(m_ButtonPrev);
 		m_Window->draw(m_ButtonNext);
 	}
