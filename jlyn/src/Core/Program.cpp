@@ -133,16 +133,16 @@ namespace jlyn {
 	void Program::ImageRenderer(std::string _path) {
 		CORE_TRACE("Loading immage from path: {0}", _path);
 
-		
 		delete m_Image;
 		m_Image = new sf::Sprite;
 
 		sf::Image image;
+
 		if (!(image.loadFromFile(_path)))
 			CORE_ERROR("Cannot load image from: {0}", _path);
 
-		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x));
-		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y));
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.9f;
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.9f;
 		
 		if (scaleX < scaleY)
 			m_Image->setScale(scaleX, scaleX);
@@ -150,7 +150,14 @@ namespace jlyn {
 			m_Image->setScale(scaleY, scaleY);
 
 		m_Texture.loadFromImage(image);
+		m_Texture.setSmooth(true);
 		m_Image->setTexture(m_Texture);
+
+		// Move later to a getOffset function
+		int imgOffsetX = (m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2;
+		int imgOffsetY = (m_Window->getSize().y - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
+
+		m_Image->setPosition(m_Window->mapPixelToCoords(sf::Vector2{ imgOffsetX, imgOffsetY }));
 	}
 
 	void Program::Update() {
