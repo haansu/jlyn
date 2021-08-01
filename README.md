@@ -13,5 +13,8 @@ JLyn is on it's way to become an image viewer program written in C++ using SFML.
 	<li>.tga</li>
 </ul>
 
+<h3> Screenshots: </h3>
 
-<h2> Screenshots will come soon! </h2>
+<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Image1.PNG" alt="Screenshot1" /></p>
+<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Image2.PNG" alt="Screenshot2" /></p>
+<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Smaller.PNG" alt="Screenshot3" /></p>
