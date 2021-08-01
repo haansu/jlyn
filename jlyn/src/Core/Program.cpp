@@ -110,7 +110,7 @@ namespace jlyn {
 					m_View.setSize({
 						static_cast<float>(m_Event.size.width),
 						static_cast<float>(m_Event.size.height)
-						});
+					});
 
 					m_Window->setView(m_View);
 
@@ -124,7 +124,7 @@ namespace jlyn {
 		// Left arrow button
 		m_ButtonPrev.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonPrev.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonPrev.setFillColor(sf::Color(255, 255, 255, 255));
+		m_ButtonPrev.setFillColor(sf::Color(255, 255, 255, 180));
 
 		sf::Image buttonImg;
 
@@ -138,7 +138,7 @@ namespace jlyn {
 		// Right arrow button
 		m_ButtonNext.setSize(sf::Vector2f(100.0f, 100.0f));
 		m_ButtonNext.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonNext.setFillColor(sf::Color(255, 255, 255, 255));
+		m_ButtonNext.setFillColor(sf::Color(255, 255, 255, 180));
 
 		CORE_INFO("Image loading arrow_right...");
 		if (!(buttonImg.loadFromFile(m_Path + "\\sprites\\arrow_right.png")))
