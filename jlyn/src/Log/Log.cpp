@@ -5,6 +5,7 @@ namespace jlyn {
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
 	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
 
+	// Initializes the logger
 	void Log::Init() {
 		spdlog::set_pattern("%^%d-%m-%C | %T - [%n]:\t%v%$");
 

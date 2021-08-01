@@ -54,6 +54,7 @@ namespace jlyn {
 		delete m_RightButtonTexture;
 	}
 
+	// Runs the application
 	void Program::Run() {
 		while (m_Window->isOpen()) {
 			CheckEvents();
@@ -65,6 +66,7 @@ namespace jlyn {
 		}
 	}
 
+	// Checks events and acts on them
 	void Program::CheckEvents() {
 		while (m_Window->pollEvent(m_Event)) {
 			switch (m_Event.type) {
@@ -120,6 +122,7 @@ namespace jlyn {
 		}
 	}
 
+	// Initialisez objects to be drawn on screen
 	void Program::InitObjects() {
 		// Left arrow button
 		m_ButtonPrev.setSize(sf::Vector2f(100.0f, 100.0f));
@@ -148,6 +151,7 @@ namespace jlyn {
 		m_ButtonNext.setTexture(m_RightButtonTexture);
 	}
 
+	// Scans the directory for all supported image files
 	void Program::ScanDirectory(std::string _directory, unsigned int& _index) {
 		for (auto& files : std::filesystem::directory_iterator(_directory)) {
 			if (IsSupported(files)) {
@@ -163,6 +167,7 @@ namespace jlyn {
 		CORE_INFO("{0} supported files have been found in the folder!", m_FilePaths.size());
 	}
 
+	// Checks if the image file is of a supported format
 	bool Program::IsSupported(std::filesystem::directory_entry _files) {
 		std::string supFormats[8];
 
@@ -186,7 +191,10 @@ namespace jlyn {
 		return false;
 	}
 
+	// Configures the sprite to be rendered on screen in Render()
 	void Program::ImageRenderer(std::string _path) {
+		// MAYBE DO A TEXTURE LOAD FROM FILE to save memory and performance
+
 		CORE_TRACE("Loading immage from path: {0}", _path);
 
 		delete m_Image;
@@ -217,7 +225,10 @@ namespace jlyn {
 		m_Image->setPosition(m_Window->mapPixelToCoords(sf::Vector2{ imgOffsetX, imgOffsetY }));
 	}
 
+	// Updates proprierties on every frame
 	void Program::Update() {
+		// Size and position modifications can be moved to resize event and init objects
+		// USELESS LOSS OF PERFORMANCE
 		sf::Vector2f buttonPrevPos;
 		buttonPrevPos.x = 0;
 		buttonPrevPos.y = m_Window->getSize().y / 2 - m_ButtonPrev.getSize().y / 2;
@@ -230,6 +241,7 @@ namespace jlyn {
 		m_ButtonNext.setPosition(m_Window->mapPixelToCoords(sf::Vector2i{ buttonNextPos }));
 	}
 	
+	// Renders the screen every frame | Drawn in order
 	void Program::Render() {
 		m_Window->draw(*m_Image);
 		m_Window->draw(m_ButtonPrev);

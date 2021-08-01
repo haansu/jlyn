@@ -9,7 +9,7 @@
 
 namespace jlyn {
 	
-	// Takes care of running the application and the window
+	// Takes care of everything application at the moment. Needs DESPAGETTIFICATION
 	class Program {
 	public:
 		Program(unsigned int _width, unsigned int _height, std::string _title, bool _resizeable, const char* _path, const char* _imagePath);

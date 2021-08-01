@@ -19,13 +19,14 @@ namespace jlyn {
 
 }
 
-
+// Core loggine macros
 #define CORE_FATAL(...)		::jlyn::Log::GetCoreLogger()->critical(__VA_ARGS__)
 #define CORE_ERROR(...)		::jlyn::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define CORE_WARN(...)		::jlyn::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define CORE_INFO(...)		::jlyn::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define CORE_TRACE(...)		::jlyn::Log::GetCoreLogger()->trace(__VA_ARGS__)
 
+// Client logging macros
 #define LOG_FATAL(...)		::jlyn::Log::GetClientLogger()->critical(__VA_ARGS__)
 #define LOG_ERROR(...)		::jlyn::Log::GetClientLogger()->error(__VA_ARGS__)
 #define LOG_WARN(...)		::jlyn::Log::GetClientLogger()->warn(__VA_ARGS__)

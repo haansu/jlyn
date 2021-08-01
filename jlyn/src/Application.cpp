@@ -8,7 +8,8 @@ int main(int argc, char** argv) {
 
 	for (int i = 0; i < argc; i++)
 		CORE_INFO("Arguement-{0}: {1}", i, argv[i]);
-
+	
+	// Checks if application has been run with a filepath arguement and gives default arguement otherwise
 	char* argFile;
 	if (argc < 2)
 		argFile = "[]none";
