@@ -43,7 +43,7 @@ namespace jlyn {
 		InitObjects();
 
 		ScanDirectory(m_ImageDirPath, m_PathIndex);
-
+		ButtonUpdate(m_Window);
 		ImageRenderer(m_FilePaths[m_PathIndex]);
 	}
 
@@ -101,6 +101,7 @@ namespace jlyn {
 
 				case sf::Event::Resized: {
 
+
 					CORE_INFO("Window: w: {0} h: {1}", m_Window->getSize().x, m_Window->getSize().y);
 
 					if (m_Window->getSize().x < 800)
@@ -113,9 +114,12 @@ namespace jlyn {
 						static_cast<float>(m_Event.size.width),
 						static_cast<float>(m_Event.size.height)
 					});
+					
+
 
 					m_Window->setView(m_View);
 
+					ButtonUpdate(m_Window);
 					ImageRenderer(m_FilePaths[m_PathIndex]);
 				}
 			}
@@ -193,8 +197,6 @@ namespace jlyn {
 
 	// Configures the sprite to be rendered on screen in Render()
 	void Program::ImageRenderer(std::string _path) {
-		// MAYBE DO A TEXTURE LOAD FROM FILE to save memory and performance
-
 		CORE_TRACE("Loading immage from path: {0}", _path);
 
 		delete m_Image;
@@ -206,8 +208,8 @@ namespace jlyn {
 		if (!(image.loadFromFile(_path)))
 			CORE_ERROR("Cannot load image from: {0}", _path);
 
-		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.95f;
-		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.95f;
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.87f;
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.87f;
 		
 		if (scaleX < scaleY)
 			m_Image->setScale(scaleX, scaleX);
@@ -225,22 +227,24 @@ namespace jlyn {
 		m_Image->setPosition(m_Window->mapPixelToCoords(sf::Vector2{ imgOffsetX, imgOffsetY }));
 	}
 
-	// Updates proprierties on every frame
-	void Program::Update() {
-		// Size and position modifications can be moved to resize event and init objects
-		// USELESS LOSS OF PERFORMANCE
+	void Program::ButtonUpdate(sf::RenderWindow*& _window) {
 		sf::Vector2f buttonPrevPos;
 		buttonPrevPos.x = 0;
-		buttonPrevPos.y = m_Window->getSize().y / 2 - m_ButtonPrev.getSize().y / 2;
-		
+		buttonPrevPos.y = _window->getSize().y / 2 - m_ButtonPrev.getSize().y / 2;
+
 		sf::Vector2f buttonNextPos;
-		buttonNextPos.x = m_Window->getSize().x - m_ButtonNext.getSize().x;
-		buttonNextPos.y = m_Window->getSize().y / 2 - m_ButtonNext.getSize().y / 2;
+		buttonNextPos.x = _window->getSize().x - m_ButtonNext.getSize().x;
+		buttonNextPos.y = _window->getSize().y / 2 - m_ButtonNext.getSize().y / 2;
 
 		m_ButtonPrev.setPosition(m_Window->mapPixelToCoords(sf::Vector2i{ buttonPrevPos }));
 		m_ButtonNext.setPosition(m_Window->mapPixelToCoords(sf::Vector2i{ buttonNextPos }));
 	}
-	
+
+	// Updates proprierties on every frame
+	void Program::Update() {
+		// Will do calculations for zoom bar
+	}
+
 	// Renders the screen every frame | Drawn in order
 	void Program::Render() {
 		m_Window->draw(*m_Image);

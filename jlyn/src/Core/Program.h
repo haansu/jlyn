@@ -23,6 +23,7 @@ namespace jlyn {
 		bool IsSupported(std::filesystem::directory_entry _files);
 
 		void ImageRenderer(std::string _path);
+		void ButtonUpdate(sf::RenderWindow*& _window);
 
 		void Update();
 		void Render();
