@@ -12,14 +12,14 @@ namespace jlyn {
 	// Takes care of running the application and the window
 	class Program {
 	public:
-		Program(unsigned int _width, unsigned int _height, std::string _title, bool _resizeable);
+		Program(unsigned int _width, unsigned int _height, std::string _title, bool _resizeable, const char* _path, const char* _imagePath);
 		~Program();
 
 		void Run();
 		void CheckEvents();
 		
 		void InitObjects();
-		void ScanDirectory(std::string _directory);
+		void ScanDirectory(std::string _directory, unsigned int& _index);
 		bool IsSupported(std::filesystem::directory_entry _files);
 
 		void ImageRenderer(std::string _path);
@@ -29,6 +29,10 @@ namespace jlyn {
 	private:
 		std::string m_Title;
 		bool m_Resizeable;
+
+		std::string m_Path;
+		std::string m_ImagePath;
+		std::string m_ImageDirPath;
 
 		std::vector<std::string> m_FilePaths;
 		unsigned int m_PathIndex;

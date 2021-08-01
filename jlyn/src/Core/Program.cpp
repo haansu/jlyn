@@ -2,13 +2,32 @@
 
 namespace jlyn {
 
-	Program::Program(unsigned int _width, unsigned int _height, std::string _title, bool _resizeable)
+	Program::Program(unsigned int _width, unsigned int _height, std::string _title, bool _resizeable, const char* _path, const char* _imagePath)
 		: m_Title(_title), m_Resizeable(_resizeable) {
-		m_VideoMode.width = _width;
-		m_VideoMode.height = _height;
-		m_PathIndex = 0;
+		m_VideoMode.width	= _width;
+		m_VideoMode.height	= _height;
+		m_Path				= _path;
+		int lastSlashIndex = m_Path.find_last_of('\\', m_Path.size() - 1);
+		CORE_INFO("Last {0}", lastSlashIndex);
+		m_Path				= m_Path.substr(0, lastSlashIndex + 1);
+		
+		m_ImagePath = _imagePath; 
 
-		m_LeftButtonTexture = new sf::Texture;
+		if (_imagePath != "[]none") {
+			lastSlashIndex = m_ImagePath.find_last_of('\\', m_ImagePath.size() - 1);
+			m_ImageDirPath = m_ImagePath.substr(0, lastSlashIndex + 1);
+
+			CORE_TRACE("Image path: {0} \nImage directory path: {1}", m_ImagePath, m_ImageDirPath);
+		} else {
+			CORE_FATAL("Image path: {0}", _imagePath);
+			m_ImagePath = "Textures/1.jpg";
+			m_ImageDirPath = "Textures";
+		}
+
+
+		m_PathIndex	= 0;
+
+		m_LeftButtonTexture	= new sf::Texture;
 		m_RightButtonTexture = new sf::Texture;
 
 		if (_resizeable)
@@ -19,10 +38,11 @@ namespace jlyn {
 		m_Window->setFramerateLimit(30);
 
 		m_View = m_Window->getDefaultView();
+		
+		m_Image = new sf::Sprite;
 		InitObjects();
 
-		// Later to be changed to arguements on program start
-		ScanDirectory("Textures");
+		ScanDirectory(m_ImageDirPath, m_PathIndex);
 
 		ImageRenderer(m_FilePaths[m_PathIndex]);
 	}
@@ -39,10 +59,8 @@ namespace jlyn {
 			CheckEvents();
 			Update();
 
-			m_Window->clear(sf::Color(55, 55, 55, 255));
-
+			m_Window->clear(sf::Color(25, 25, 25, 255));
 			Render();
-
 			m_Window->display();
 		}
 	}
@@ -111,8 +129,8 @@ namespace jlyn {
 		sf::Image buttonImg;
 
 		CORE_INFO("Image loading arrow_left...");
-		if (!(buttonImg.loadFromFile("sprites/arrow_left.png")))
-			CORE_ERROR("Cannot load left_arrow from: {0}", "sprites/arrow_left.png");
+		if (!(buttonImg.loadFromFile((m_Path + "\\sprites\\arrow_left.png").c_str())))
+			CORE_ERROR("Cannot load left_arrow from: {0}", "\\sprites\\arrow_left.png");
 
 		m_LeftButtonTexture->loadFromImage(buttonImg);
 		m_ButtonPrev.setTexture(m_LeftButtonTexture);
@@ -123,17 +141,21 @@ namespace jlyn {
 		m_ButtonNext.setFillColor(sf::Color(255, 255, 255, 255));
 
 		CORE_INFO("Image loading arrow_right...");
-		if (!(buttonImg.loadFromFile("sprites/arrow_right.png")))
-			CORE_ERROR("Cannot load left_arrow from: {0}", "sprites/arrow_right.png");
+		if (!(buttonImg.loadFromFile(m_Path + "\\sprites\\arrow_right.png")))
+			CORE_ERROR("Cannot load left_arrow from: {0}", (m_Path + "\\sprites\\arrow_right.png").c_str());
 
 		m_RightButtonTexture->loadFromImage(buttonImg);
 		m_ButtonNext.setTexture(m_RightButtonTexture);
 	}
 
-	void Program::ScanDirectory(std::string _directory) {
+	void Program::ScanDirectory(std::string _directory, unsigned int& _index) {
 		for (auto& files : std::filesystem::directory_iterator(_directory)) {
 			if (IsSupported(files)) {
 				m_FilePaths.push_back(files.path().string());
+
+				if (m_ImagePath == m_FilePaths[m_FilePaths.size() - 1])
+					_index = m_FilePaths.size() - 1;
+				
 				CORE_TRACE("File path added: {0}", m_FilePaths[m_FilePaths.size() - 1]);
 			}
 		}
