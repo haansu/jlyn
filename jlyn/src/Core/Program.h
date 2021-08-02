@@ -3,6 +3,7 @@
 #include <SFML.h>
 #include <JLynCore.h>
 #include <Core/Button.h>
+#include <Core/Pad.h>
 
 namespace jlyn {
 	
@@ -35,6 +36,8 @@ namespace jlyn {
 		std::vector<std::string> m_FilePaths;
 		unsigned int m_PathIndex;
 
+		sf::Color m_BackgroundColor;
+
 		sf::RenderWindow* m_Window;
 		sf::VideoMode m_VideoMode;
 		sf::Event m_Event;
@@ -42,6 +45,9 @@ namespace jlyn {
 
 		Button m_ButtonPrev;
 		Button m_ButtonNext;
+
+		Pad m_LeftPad;
+		Pad m_RightPad;
 
 		sf::Sprite* m_Image;
 		sf::Texture m_Texture;

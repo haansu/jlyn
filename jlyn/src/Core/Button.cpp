@@ -4,6 +4,7 @@ namespace jlyn {
 
 	Button::Button() 
 		: Entity(){
+		CORE_INFO("Button {0} has been created!", m_Title);
 		SetSize(sf::Vector2f(100.0f, 100.0f));
 		SetPosition(sf::Vector2f(0.0f, 0.0f));
 		SetColor(sf::Color(255, 255, 255, 255));
@@ -11,6 +12,7 @@ namespace jlyn {
 
 	Button::Button(std::string _title, sf::Vector2f _size, sf::Vector2f _position, sf::Color _color, std::string _path)
 		: Entity(_title) {
+		CORE_INFO("Button {0} has been created!", m_Title);
 		m_Button.setSize(_size);
 		m_Button.setPosition(_position);
 		m_Button.setFillColor(_color);
@@ -23,6 +25,7 @@ namespace jlyn {
 
 	// Initialisez button
 	void Button::Init(std::string _title, sf::Vector2f _size, sf::Vector2f _position, sf::Color _color) {
+		CORE_INFO("Initialising {0}!", m_Title);
 		m_Title = _title;
 		m_Button.setSize(_size);
 		m_Button.setPosition(_position);

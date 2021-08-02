@@ -7,6 +7,8 @@ namespace jlyn {
 		m_VideoMode.width	= _width;
 		m_VideoMode.height	= _height;
 		m_Path				= _path;
+		m_BackgroundColor	= sf::Color(25, 25, 25, 255);
+
 		int lastSlashIndex = m_Path.find_last_of('\\', m_Path.size() - 1);
 		CORE_INFO("Last {0}", lastSlashIndex);
 		m_Path				= m_Path.substr(0, lastSlashIndex + 1);
@@ -23,9 +25,6 @@ namespace jlyn {
 			m_ImagePath = "Textures/1.jpg";
 			m_ImageDirPath = "Textures";
 		}
-
-		m_ButtonNext.Init("Next-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 255));
-		m_ButtonPrev.Init("Prev-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 255));
 
 		m_PathIndex	= 0;
 
@@ -57,7 +56,7 @@ namespace jlyn {
 			CheckEvents();
 			Update();
 
-			m_Window->clear(sf::Color(25, 25, 25, 255));
+			m_Window->clear(m_BackgroundColor);
 			Render();
 			m_Window->display();
 		}
@@ -122,18 +121,16 @@ namespace jlyn {
 	// Initialisez objects to be drawn on screen
 	void Program::InitObjects() {
 		// Left arrow button
-		m_ButtonPrev.SetSize(sf::Vector2f(100.0f, 100.0f));
-		m_ButtonPrev.SetPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonPrev.SetColor(sf::Color(255, 255, 255, 180));
-
+		m_ButtonPrev.Init("Prev-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 180));
 		m_ButtonPrev.LoadTexture((m_Path + "\\sprites\\arrow_left.png"));
 
 		// Right arrow button
-		m_ButtonNext.SetSize(sf::Vector2f(100.0f, 100.0f));
-		m_ButtonNext.SetPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonNext.SetColor(sf::Color(255, 255, 255, 180));
-
+		m_ButtonNext.Init("Next-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 180));
 		m_ButtonNext.LoadTexture((m_Path + "\\sprites\\arrow_right.png"));
+
+		// Left and right pads
+		m_LeftPad.Init("Left-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), m_BackgroundColor);
+		m_RightPad.Init("Right-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), m_BackgroundColor);
 	}
 
 	// Scans the directory for all supported image files
@@ -189,8 +186,8 @@ namespace jlyn {
 		if (!(image.loadFromFile(_path)))
 			CORE_ERROR("Cannot load image from: {0}", _path);
 
-		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.87f;
-		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.87f;
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.85f;
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.85f;
 		
 		if (scaleX < scaleY)
 			m_Image->setScale(scaleX, scaleX);
@@ -201,7 +198,7 @@ namespace jlyn {
 		m_Texture.setSmooth(true);
 		m_Image->setTexture(m_Texture);
 
-		// Move later to a getOffset function
+		// Offsetting the image so it's always centered
 		int imgOffsetX = (m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2;
 		int imgOffsetY = (m_Window->getSize().y - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
 
@@ -219,6 +216,17 @@ namespace jlyn {
 
 		m_ButtonPrev.SetPositionRel(_window, buttonPrevPos);
 		m_ButtonNext.SetPositionRel(_window, buttonNextPos);
+
+		// Pads update. To be moved to own function
+		sf::Vector2f padSize;
+		padSize.x = 60;
+		padSize.y = _window->getSize().y;
+		
+		m_LeftPad.SetPositionRel(_window, sf::Vector2i(0.0f, 0.0f));
+		m_RightPad.SetPositionRel(_window, sf::Vector2i(_window->getSize().x - padSize.x, 0.0f));
+
+		m_LeftPad.SetSize(padSize);
+		m_RightPad.SetSize(padSize);
 	}
 
 	// Updates proprierties on every frame
@@ -229,6 +237,10 @@ namespace jlyn {
 	// Renders the screen every frame | Drawn in order
 	void Program::Render() {
 		m_Window->draw(*m_Image);
+		
+		m_LeftPad.Draw(m_Window);
+		m_RightPad.Draw(m_Window);
+
 		m_ButtonNext.Draw(m_Window);
 		m_ButtonPrev.Draw(m_Window);
 	}

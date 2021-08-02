@@ -15,6 +15,7 @@
     <ClInclude Include="src\Core\Button.h" />
     <ClInclude Include="src\JLyn.h" />
     <ClInclude Include="src\Core\Entity.h" />
+    <ClInclude Include="src\Core\Pad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
@@ -23,6 +24,6 @@
     </ClCompile>
     <ClCompile Include="src\Log\Log.cpp" />
     <ClCompile Include="src\Core\Button.cpp" />
-    <ClCompile Include="src\Core\Entity.cpp" />
+    <ClCompile Include="src\Core\Pad.cpp" />
   </ItemGroup>
 </Project>

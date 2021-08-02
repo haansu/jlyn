@@ -12,7 +12,10 @@ namespace jlyn {
 			: m_Title(_title) {}
 		virtual ~Entity() = default;
 
-		virtual void Init();
+		inline virtual void Init() {}
+		inline virtual void Draw() {}
+
+		inline std::string GetTitle() { return m_Title; }
 
 	protected:
 		std::string m_Title;

@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Pad.h" />
     <ClInclude Include="src\Core\Entity.h" />
     <ClInclude Include="src\Core\Button.h" />
     <ClInclude Include="src\JLyn.h" />
@@ -149,9 +150,9 @@
     <ClInclude Include="src\SFML.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\Pad.cpp" />
     <ClCompile Include="src\Core\Button.cpp" />
     <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\Core\Entity.cpp" />
     <ClCompile Include="src\Core\Program.cpp" />
     <ClCompile Include="src\Log\Log.cpp" />
   </ItemGroup>
