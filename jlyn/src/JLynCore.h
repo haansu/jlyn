@@ -1,4 +1,9 @@
 #pragma once
 
-#include "Core/Program.h"
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <vector>
+#include <string>
+
 #include "Log/Log.h"

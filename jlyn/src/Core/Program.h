@@ -2,10 +2,7 @@
 
 #include <SFML.h>
 #include <JLynCore.h>
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <vector>
+#include <Core/Button.h>
 
 namespace jlyn {
 	
@@ -43,8 +40,8 @@ namespace jlyn {
 		sf::Event m_Event;
 		sf::View m_View;
 
-		sf::RectangleShape m_ButtonPrev;
-		sf::RectangleShape m_ButtonNext;
+		Button m_ButtonPrev;
+		Button m_ButtonNext;
 
 		sf::Sprite* m_Image;
 		sf::Texture m_Texture;

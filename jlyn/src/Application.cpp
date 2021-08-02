@@ -1,6 +1,4 @@
-#include <iostream>
-
-#include <JLynCore.h>
+#include <JLyn.h>
 
 // Entry Point of the Program
 int main(int argc, char** argv) {

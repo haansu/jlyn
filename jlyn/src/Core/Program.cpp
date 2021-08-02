@@ -24,11 +24,10 @@ namespace jlyn {
 			m_ImageDirPath = "Textures";
 		}
 
+		m_ButtonNext.Init("Next-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 255));
+		m_ButtonPrev.Init("Prev-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 255));
 
 		m_PathIndex	= 0;
-
-		m_LeftButtonTexture	= new sf::Texture;
-		m_RightButtonTexture = new sf::Texture;
 
 		if (_resizeable)
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
@@ -50,8 +49,6 @@ namespace jlyn {
 	Program::~Program() {
 		delete m_Window;
 		delete m_Image;
-		delete m_LeftButtonTexture;
-		delete m_RightButtonTexture;
 	}
 
 	// Runs the application
@@ -100,8 +97,6 @@ namespace jlyn {
 				}
 
 				case sf::Event::Resized: {
-
-
 					CORE_INFO("Window: w: {0} h: {1}", m_Window->getSize().x, m_Window->getSize().y);
 
 					if (m_Window->getSize().x < 800)
@@ -115,8 +110,6 @@ namespace jlyn {
 						static_cast<float>(m_Event.size.height)
 					});
 					
-
-
 					m_Window->setView(m_View);
 
 					ButtonUpdate(m_Window);
@@ -129,30 +122,18 @@ namespace jlyn {
 	// Initialisez objects to be drawn on screen
 	void Program::InitObjects() {
 		// Left arrow button
-		m_ButtonPrev.setSize(sf::Vector2f(100.0f, 100.0f));
-		m_ButtonPrev.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonPrev.setFillColor(sf::Color(255, 255, 255, 180));
+		m_ButtonPrev.SetSize(sf::Vector2f(100.0f, 100.0f));
+		m_ButtonPrev.SetPosition(sf::Vector2f(0.0f, 0.0f));
+		m_ButtonPrev.SetColor(sf::Color(255, 255, 255, 180));
 
-		sf::Image buttonImg;
-
-		CORE_INFO("Image loading arrow_left...");
-		if (!(buttonImg.loadFromFile((m_Path + "\\sprites\\arrow_left.png").c_str())))
-			CORE_ERROR("Cannot load left_arrow from: {0}", "\\sprites\\arrow_left.png");
-
-		m_LeftButtonTexture->loadFromImage(buttonImg);
-		m_ButtonPrev.setTexture(m_LeftButtonTexture);
+		m_ButtonPrev.LoadTexture((m_Path + "\\sprites\\arrow_left.png"));
 
 		// Right arrow button
-		m_ButtonNext.setSize(sf::Vector2f(100.0f, 100.0f));
-		m_ButtonNext.setPosition(sf::Vector2f(0.0f, 0.0f));
-		m_ButtonNext.setFillColor(sf::Color(255, 255, 255, 180));
+		m_ButtonNext.SetSize(sf::Vector2f(100.0f, 100.0f));
+		m_ButtonNext.SetPosition(sf::Vector2f(0.0f, 0.0f));
+		m_ButtonNext.SetColor(sf::Color(255, 255, 255, 180));
 
-		CORE_INFO("Image loading arrow_right...");
-		if (!(buttonImg.loadFromFile(m_Path + "\\sprites\\arrow_right.png")))
-			CORE_ERROR("Cannot load left_arrow from: {0}", (m_Path + "\\sprites\\arrow_right.png").c_str());
-
-		m_RightButtonTexture->loadFromImage(buttonImg);
-		m_ButtonNext.setTexture(m_RightButtonTexture);
+		m_ButtonNext.LoadTexture((m_Path + "\\sprites\\arrow_right.png"));
 	}
 
 	// Scans the directory for all supported image files
@@ -228,16 +209,16 @@ namespace jlyn {
 	}
 
 	void Program::ButtonUpdate(sf::RenderWindow*& _window) {
-		sf::Vector2f buttonPrevPos;
+		sf::Vector2i buttonPrevPos;
 		buttonPrevPos.x = 0;
-		buttonPrevPos.y = _window->getSize().y / 2 - m_ButtonPrev.getSize().y / 2;
+		buttonPrevPos.y = _window->getSize().y / 2 - m_ButtonPrev.GetSize().y / 2;
 
-		sf::Vector2f buttonNextPos;
-		buttonNextPos.x = _window->getSize().x - m_ButtonNext.getSize().x;
-		buttonNextPos.y = _window->getSize().y / 2 - m_ButtonNext.getSize().y / 2;
+		sf::Vector2i buttonNextPos;
+		buttonNextPos.x = _window->getSize().x - m_ButtonNext.GetSize().x;
+		buttonNextPos.y = _window->getSize().y / 2 - m_ButtonNext.GetSize().y / 2;
 
-		m_ButtonPrev.setPosition(m_Window->mapPixelToCoords(sf::Vector2i{ buttonPrevPos }));
-		m_ButtonNext.setPosition(m_Window->mapPixelToCoords(sf::Vector2i{ buttonNextPos }));
+		m_ButtonPrev.SetPositionRel(_window, buttonPrevPos);
+		m_ButtonNext.SetPositionRel(_window, buttonNextPos);
 	}
 
 	// Updates proprierties on every frame
@@ -248,8 +229,8 @@ namespace jlyn {
 	// Renders the screen every frame | Drawn in order
 	void Program::Render() {
 		m_Window->draw(*m_Image);
-		m_Window->draw(m_ButtonPrev);
-		m_Window->draw(m_ButtonNext);
+		m_ButtonNext.Draw(m_Window);
+		m_ButtonPrev.Draw(m_Window);
 	}
 
 }

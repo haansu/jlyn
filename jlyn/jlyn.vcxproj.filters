@@ -12,6 +12,9 @@
     <ClInclude Include="src\JLynCore.h" />
     <ClInclude Include="src\SFML.h" />
     <ClInclude Include="src\Log\Log.h" />
+    <ClInclude Include="src\Core\Button.h" />
+    <ClInclude Include="src\JLyn.h" />
+    <ClInclude Include="src\Core\Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
@@ -19,5 +22,7 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Log\Log.cpp" />
+    <ClCompile Include="src\Core\Button.cpp" />
+    <ClCompile Include="src\Core\Entity.cpp" />
   </ItemGroup>
 </Project>
