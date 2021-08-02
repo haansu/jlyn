@@ -21,6 +21,7 @@ namespace jlyn {
 		delete m_Texture;
 	}
 
+	// Initialisez button
 	void Button::Init(std::string _title, sf::Vector2f _size, sf::Vector2f _position, sf::Color _color) {
 		m_Title = _title;
 		m_Button.setSize(_size);
@@ -28,6 +29,7 @@ namespace jlyn {
 		m_Button.setFillColor(_color);
 	}
 
+	// Draws the button on a renderwindow
 	void Button::Draw(sf::RenderWindow*& _window) {
 		_window->draw(m_Button);
 	}
@@ -40,6 +42,7 @@ namespace jlyn {
 		m_Button.setPosition(_position);
 	}
 
+	// Sets position relative to the window pixelmap
 	void Button::SetPositionRel(sf::RenderWindow*& _window, sf::Vector2i _position) {
 		m_Button.setPosition(_window->mapPixelToCoords(sf::Vector2i{ _position }));
 	}
@@ -52,6 +55,7 @@ namespace jlyn {
 		return m_Button.getSize();
 	}
 
+	// Loads the texture into the texure component of the buttton
 	void Button::LoadTexture(std::string _path) {
 		sf::Image buttonImg;
 		CORE_INFO("Image loading loading for {0}...", m_Title);
