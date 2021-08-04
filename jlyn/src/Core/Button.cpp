@@ -25,8 +25,8 @@ namespace jlyn {
 
 	// Initialisez button
 	void Button::Init(std::string _title, sf::Vector2f _size, sf::Vector2f _position, sf::Color _color) {
-		CORE_INFO("Initialising {0}!", m_Title);
 		m_Title = _title;
+		CORE_INFO("Initialising {0}!", m_Title);
 		m_Button.setSize(_size);
 		m_Button.setPosition(_position);
 		m_Button.setFillColor(_color);
@@ -54,8 +54,22 @@ namespace jlyn {
 		m_Button.setFillColor(_color);
 	}
 
+	// Checks if the object is hovered
+	bool Button::Hovered(sf::RenderWindow*& _window) {
+		if (sf::Mouse::getPosition(*_window).x > m_Button.getPosition().x && sf::Mouse::getPosition(*_window).x < m_Button.getPosition().x + m_Button.getSize().x &&
+			sf::Mouse::getPosition(*_window).y > m_Button.getPosition().y && sf::Mouse::getPosition(*_window).y < m_Button.getPosition().y + m_Button.getSize().y) {
+			CORE_TRACE("Hovering over {0}", m_Title);
+			return true;
+		}
+		return false;
+	}
+
 	sf::Vector2f Button::GetSize() {
 		return m_Button.getSize();
+	}
+
+	sf::Vector2f Button::GetPosition() {
+		return m_Button.getPosition();
 	}
 
 	// Loads the texture into the texure component of the buttton

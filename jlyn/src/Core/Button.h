@@ -20,7 +20,10 @@ namespace jlyn {
 		void SetColor(sf::Color& _color);
 		void LoadTexture(std::string _path);
 
+		bool Hovered(sf::RenderWindow*& _window);
+
 		sf::Vector2f GetSize();
+		sf::Vector2f GetPosition();
 	private:
 		sf::RectangleShape m_Button;
 		sf::Texture* m_Texture = new sf::Texture;

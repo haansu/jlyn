@@ -19,8 +19,8 @@ namespace jlyn {
 	}
 
 	void Pad::Init(std::string _title, sf::Vector2f _size, sf::Vector2f _position, sf::Color _color) {
-		CORE_INFO("Initialising {0}!", m_Title);
 		m_Pad.setSize(_size);
+		CORE_INFO("Initialising {0}!", m_Title);
 		m_Pad.setPosition(_position);
 		m_Pad.setFillColor(_color);
 	}

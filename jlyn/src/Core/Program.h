@@ -23,6 +23,9 @@ namespace jlyn {
 		void ImageRenderer(std::string _path);
 		void ButtonUpdate(sf::RenderWindow*& _window);
 
+		void PrevImage();
+		void NextImage();
+
 		void Update();
 		void Render();
 	private:

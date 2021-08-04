@@ -77,23 +77,36 @@ namespace jlyn {
 					if (m_Event.key.code == sf::Keyboard::Escape) {
 						m_Window->close();
 						CORE_INFO("Window closed!");
+						break;
 					}
 
 					if (m_Event.key.code == sf::Keyboard::Left) {
-						if (m_PathIndex > 0) {
-							ImageRenderer(m_FilePaths[m_PathIndex - 1]);
-							m_PathIndex--;
-						}
+						PrevImage();
+						break;
 					}
 
 					if (m_Event.key.code == sf::Keyboard::Right) {
-						if (m_PathIndex < m_FilePaths.size() - 1) {
-							ImageRenderer(m_FilePaths[m_PathIndex + 1]);
-							m_PathIndex++;
-						}
+						NextImage();
+						break;
 					}
+				
 					break;
 				}
+				
+				case sf::Event::MouseButtonPressed: {
+					if (m_ButtonPrev.Hovered(m_Window)) {
+						PrevImage();
+						break;
+					}
+
+					if (m_ButtonNext.Hovered(m_Window)) {
+						NextImage();
+						break;
+					}
+
+					break;
+				}
+
 
 				case sf::Event::Resized: {
 					CORE_INFO("Window: w: {0} h: {1}", m_Window->getSize().x, m_Window->getSize().y);
@@ -121,11 +134,11 @@ namespace jlyn {
 	// Initialisez objects to be drawn on screen
 	void Program::InitObjects() {
 		// Left arrow button
-		m_ButtonPrev.Init("Prev-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 180));
+		m_ButtonPrev.Init("Prev-Button", sf::Vector2f(70.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 180));
 		m_ButtonPrev.LoadTexture((m_Path + "\\sprites\\arrow_left.png"));
 
 		// Right arrow button
-		m_ButtonNext.Init("Next-Button", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 180));
+		m_ButtonNext.Init("Next-Button", sf::Vector2f(70.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(255, 255, 255, 180));
 		m_ButtonNext.LoadTexture((m_Path + "\\sprites\\arrow_right.png"));
 
 		// Left and right pads
@@ -229,9 +242,25 @@ namespace jlyn {
 		m_RightPad.SetSize(padSize);
 	}
 
+	// Changes image to the previous in the list
+	void Program::PrevImage() {
+		if (m_PathIndex > 0) {
+			ImageRenderer(m_FilePaths[m_PathIndex - 1]);
+			m_PathIndex--;
+		}
+	}
+
+	// Changes image to the next in the list
+	void Program::NextImage() {
+		if (m_PathIndex < m_FilePaths.size() - 1) {
+			ImageRenderer(m_FilePaths[m_PathIndex + 1]);
+			m_PathIndex++;
+		}
+	}
+
 	// Updates proprierties on every frame
 	void Program::Update() {
-		// Will do calculations for zoom bar
+
 	}
 
 	// Renders the screen every frame | Drawn in order
