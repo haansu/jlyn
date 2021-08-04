@@ -107,7 +107,6 @@ namespace jlyn {
 					break;
 				}
 
-
 				case sf::Event::Resized: {
 					CORE_INFO("Window: w: {0} h: {1}", m_Window->getSize().x, m_Window->getSize().y);
 

@@ -39,7 +39,7 @@ namespace jlyn {
 	}
 
 	// Sets position relative to the window pixelmap
-	void Pad::SetPositionRel(sf::RenderWindow*& _window, sf::Vector2i _position) {
+	void Pad::SetPositionRel(sf::RenderWindow*& _window, sf::Vector2i& _position) {
 		m_Pad.setPosition(_window->mapPixelToCoords(sf::Vector2i{ _position }));
 	}
 
