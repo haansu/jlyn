@@ -16,7 +16,7 @@ namespace jlyn {
 
 		void SetSize(sf::Vector2f& _size); 
 		void SetPosition(sf::Vector2f& _position);
-		void SetPositionRel(sf::RenderWindow*& _window, sf::Vector2i _position);
+		void SetPositionRel(sf::RenderWindow*& _window, sf::Vector2i& _position);
 		void SetColor(sf::Color& _color);
 		void LoadTexture(std::string _path);
 

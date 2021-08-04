@@ -122,6 +122,7 @@ namespace jlyn {
 						static_cast<float>(m_Event.size.height)
 					});
 					
+					m_View.setCenter((float)m_Window->getSize().x / 2, (float)m_Window->getSize().y / 2);
 					m_Window->setView(m_View);
 
 					ButtonUpdate(m_Window);
@@ -221,14 +222,16 @@ namespace jlyn {
 	void Program::ButtonUpdate(sf::RenderWindow*& _window) {
 		sf::Vector2i buttonPrevPos;
 		buttonPrevPos.x = 0;
-		buttonPrevPos.y = _window->getSize().y / 2 - m_ButtonPrev.GetSize().y / 2;
+		buttonPrevPos.y = (float)_window->getSize().y / 2 - m_ButtonPrev.GetSize().y / 2;
 
 		sf::Vector2i buttonNextPos;
-		buttonNextPos.x = _window->getSize().x - m_ButtonNext.GetSize().x;
-		buttonNextPos.y = _window->getSize().y / 2 - m_ButtonNext.GetSize().y / 2;
+		buttonNextPos.x = (float)_window->getSize().x - m_ButtonNext.GetSize().x;
+		buttonNextPos.y = (float)_window->getSize().y / 2 - m_ButtonNext.GetSize().y / 2;
 
-		m_ButtonPrev.SetPositionRel(_window, buttonPrevPos);
-		m_ButtonNext.SetPositionRel(_window, buttonNextPos);
+		m_ButtonPrev.SetPosition(sf::Vector2f(buttonPrevPos));
+		m_ButtonNext.SetPosition(sf::Vector2f(buttonNextPos));
+
+		CORE_INFO("{0}, {1}", m_ButtonPrev.GetPosition().x, m_ButtonPrev.GetPosition().y);
 
 		// Pads update. To be moved to own function
 		sf::Vector2f padSize;

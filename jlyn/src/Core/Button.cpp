@@ -46,7 +46,7 @@ namespace jlyn {
 	}
 
 	// Sets position relative to the window pixelmap
-	void Button::SetPositionRel(sf::RenderWindow*& _window, sf::Vector2i _position) {
+	void Button::SetPositionRel(sf::RenderWindow*& _window, sf::Vector2i& _position) {
 		m_Button.setPosition(_window->mapPixelToCoords(sf::Vector2i{ _position }));
 	}
 
