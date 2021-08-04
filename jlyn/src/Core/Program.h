@@ -26,11 +26,14 @@ namespace jlyn {
 		void PrevImage();
 		void NextImage();
 
+		void FadeInOut(Button& _button);
+
 		void Update();
 		void Render();
 	private:
 		std::string m_Title;
 		bool m_Resizeable;
+		float m_ZoomLevel;
 
 		std::string m_Path;
 		std::string m_ImagePath;
@@ -51,6 +54,7 @@ namespace jlyn {
 
 		Pad m_LeftPad;
 		Pad m_RightPad;
+		Pad m_TopPad;
 
 		sf::Sprite* m_Image;
 		sf::Texture m_Texture;

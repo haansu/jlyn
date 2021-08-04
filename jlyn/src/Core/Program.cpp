@@ -4,29 +4,32 @@ namespace jlyn {
 
 	Program::Program(unsigned int _width, unsigned int _height, std::string _title, bool _resizeable, const char* _path, const char* _imagePath)
 		: m_Title(_title), m_Resizeable(_resizeable) {
-		m_VideoMode.width	= _width;
-		m_VideoMode.height	= _height;
-		m_Path				= _path;
-		m_BackgroundColor	= sf::Color(25, 25, 25, 255);
+		m_VideoMode.width = _width;
+		m_VideoMode.height = _height;
+		m_Path = _path;
+		m_BackgroundColor = sf::Color(25, 25, 25, 255);
+
+		m_ZoomLevel = 1;
 
 		int lastSlashIndex = m_Path.find_last_of('\\', m_Path.size() - 1);
 		CORE_INFO("Last {0}", lastSlashIndex);
-		m_Path				= m_Path.substr(0, lastSlashIndex + 1);
-		
-		m_ImagePath = _imagePath; 
+		m_Path = m_Path.substr(0, lastSlashIndex + 1);
+
+		m_ImagePath = _imagePath;
 
 		if (_imagePath != "[]none") {
 			lastSlashIndex = m_ImagePath.find_last_of('\\', m_ImagePath.size() - 1);
 			m_ImageDirPath = m_ImagePath.substr(0, lastSlashIndex + 1);
 
 			CORE_TRACE("Image path: {0} \nImage directory path: {1}", m_ImagePath, m_ImageDirPath);
-		} else {
+		}
+		else {
 			CORE_FATAL("Image path: {0}", _imagePath);
 			m_ImagePath = "Textures/1.jpg";
 			m_ImageDirPath = "Textures";
 		}
 
-		m_PathIndex	= 0;
+		m_PathIndex = 0;
 
 		if (_resizeable)
 			m_Window = new sf::RenderWindow(m_VideoMode, m_Title, sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
@@ -36,7 +39,7 @@ namespace jlyn {
 		m_Window->setFramerateLimit(30);
 
 		m_View = m_Window->getDefaultView();
-		
+
 		m_Image = new sf::Sprite;
 		InitObjects();
 
@@ -66,67 +69,78 @@ namespace jlyn {
 	void Program::CheckEvents() {
 		while (m_Window->pollEvent(m_Event)) {
 			switch (m_Event.type) {
-				case sf::Event::Closed: {
+			case sf::Event::Closed: {
+				m_Window->close();
+				CORE_INFO("Window closed!");
+				break;
+			}
+
+			case sf::Event::KeyPressed: {
+				CORE_TRACE("Key pressed: {0}", m_Event.text.unicode);
+				if (m_Event.key.code == sf::Keyboard::Escape) {
 					m_Window->close();
 					CORE_INFO("Window closed!");
 					break;
 				}
 
-				case sf::Event::KeyPressed: {
-					CORE_TRACE("Key pressed: {0}", m_Event.text.unicode);
-					if (m_Event.key.code == sf::Keyboard::Escape) {
-						m_Window->close();
-						CORE_INFO("Window closed!");
-						break;
-					}
-
-					if (m_Event.key.code == sf::Keyboard::Left) {
-						PrevImage();
-						break;
-					}
-
-					if (m_Event.key.code == sf::Keyboard::Right) {
-						NextImage();
-						break;
-					}
-				
-					break;
-				}
-				
-				case sf::Event::MouseButtonPressed: {
-					if (m_ButtonPrev.Hovered(m_Window)) {
-						PrevImage();
-						break;
-					}
-
-					if (m_ButtonNext.Hovered(m_Window)) {
-						NextImage();
-						break;
-					}
-
+				if (m_Event.key.code == sf::Keyboard::Left) {
+					PrevImage();
 					break;
 				}
 
-				case sf::Event::Resized: {
-					CORE_INFO("Window: w: {0} h: {1}", m_Window->getSize().x, m_Window->getSize().y);
+				if (m_Event.key.code == sf::Keyboard::Right) {
+					NextImage();
+					break;
+				}
 
-					if (m_Window->getSize().x < 800)
-						m_Window->setSize(sf::Vector2u(800, m_Event.size.height));
+				break;
+			}
 
-					if (m_Window->getSize().y < 600)
-						m_Window->setSize(sf::Vector2u(m_Event.size.width, 600));
+			case sf::Event::MouseButtonPressed: {
+				if (m_ButtonPrev.Hovered(m_Window)) {
+					PrevImage();
+					break;
+				}
 
-					m_View.setSize({
-						static_cast<float>(m_Event.size.width),
-						static_cast<float>(m_Event.size.height)
+				if (m_ButtonNext.Hovered(m_Window)) {
+					NextImage();
+					break;
+				}
+
+				break;
+			}
+
+			case sf::Event::MouseWheelMoved: {
+				if (m_ZoomLevel > 0.3 && m_Event.mouseWheel.delta < 0)
+					m_ZoomLevel -= 0.1;
+				if (m_ZoomLevel < 3 && m_Event.mouseWheel.delta > 0)
+					m_ZoomLevel += 0.1;
+				CORE_TRACE("Zoom Level: {0}", m_ZoomLevel);
+
+				ImageRenderer(m_FilePaths[m_PathIndex]);
+				break;
+			}
+
+			case sf::Event::Resized: {
+				CORE_INFO("Window: w: {0} h: {1}", m_Window->getSize().x, m_Window->getSize().y);
+
+				if (m_Window->getSize().x < 800)
+					m_Window->setSize(sf::Vector2u(800, m_Event.size.height));
+
+				if (m_Window->getSize().y < 600)
+					m_Window->setSize(sf::Vector2u(m_Event.size.width, 600));
+
+				m_View.setSize({
+					static_cast<float>(m_Event.size.width),
+					static_cast<float>(m_Event.size.height)
 					});
-					
-					m_View.setCenter((float)m_Window->getSize().x / 2, (float)m_Window->getSize().y / 2);
-					m_Window->setView(m_View);
 
-					ButtonUpdate(m_Window);
-					ImageRenderer(m_FilePaths[m_PathIndex]);
-				}
+				m_View.setCenter((float)m_Window->getSize().x / 2, (float)m_Window->getSize().y / 2);
+				m_Window->setView(m_View);
+
+				ButtonUpdate(m_Window);
+				ImageRenderer(m_FilePaths[m_PathIndex]);
+			}
 			}
 		}
 	}
@@ -144,6 +158,7 @@ namespace jlyn {
 		// Left and right pads
 		m_LeftPad.Init("Left-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), m_BackgroundColor);
 		m_RightPad.Init("Right-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), m_BackgroundColor);
+		m_TopPad.Init("Top-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(15, 15, 15, 255));
 	}
 
 	// Scans the directory for all supported image files
@@ -154,7 +169,7 @@ namespace jlyn {
 
 				if (m_ImagePath == m_FilePaths[m_FilePaths.size() - 1])
 					_index = m_FilePaths.size() - 1;
-				
+
 				CORE_TRACE("File path added: {0}", m_FilePaths[m_FilePaths.size() - 1]);
 			}
 		}
@@ -199,9 +214,9 @@ namespace jlyn {
 		if (!(image.loadFromFile(_path)))
 			CORE_ERROR("Cannot load image from: {0}", _path);
 
-		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.85f;
-		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.85f;
-		
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.85f * m_ZoomLevel;
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.85f * m_ZoomLevel;
+
 		if (scaleX < scaleY)
 			m_Image->setScale(scaleX, scaleX);
 		else
@@ -213,7 +228,7 @@ namespace jlyn {
 
 		// Offsetting the image so it's always centered
 		int imgOffsetX = (m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2;
-		int imgOffsetY = (m_Window->getSize().y - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
+		int imgOffsetY = (m_Window->getSize().y + 50 - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
 
 		m_Image->setPosition(m_Window->mapPixelToCoords(sf::Vector2{ imgOffsetX, imgOffsetY }));
 	}
@@ -221,11 +236,11 @@ namespace jlyn {
 	void Program::ButtonUpdate(sf::RenderWindow*& _window) {
 		sf::Vector2i buttonPrevPos;
 		buttonPrevPos.x = 0;
-		buttonPrevPos.y = (float)_window->getSize().y / 2 - m_ButtonPrev.GetSize().y / 2;
+		buttonPrevPos.y = ((float)_window->getSize().y + 50) / 2 - m_ButtonPrev.GetSize().y / 2;
 
 		sf::Vector2i buttonNextPos;
 		buttonNextPos.x = (float)_window->getSize().x - m_ButtonNext.GetSize().x;
-		buttonNextPos.y = (float)_window->getSize().y / 2 - m_ButtonNext.GetSize().y / 2;
+		buttonNextPos.y = ((float)_window->getSize().y + 50) / 2 - m_ButtonNext.GetSize().y / 2;
 
 		m_ButtonPrev.SetPosition(sf::Vector2f(buttonPrevPos));
 		m_ButtonNext.SetPosition(sf::Vector2f(buttonNextPos));
@@ -234,11 +249,14 @@ namespace jlyn {
 
 		// Pads update. To be moved to own function
 		sf::Vector2f padSize;
-		padSize.x = 60;
+		padSize.x = 30;
 		padSize.y = _window->getSize().y;
-		
+
 		m_LeftPad.SetPositionRel(_window, sf::Vector2i(0.0f, 0.0f));
 		m_RightPad.SetPositionRel(_window, sf::Vector2i(_window->getSize().x - padSize.x, 0.0f));
+
+		m_TopPad.SetPositionRel(_window, sf::Vector2i(0.0f, 0.0f));
+		m_TopPad.SetSize(sf::Vector2f((float)_window->getSize().x, 50));
 
 		m_LeftPad.SetSize(padSize);
 		m_RightPad.SetSize(padSize);
@@ -260,9 +278,35 @@ namespace jlyn {
 		}
 	}
 
+	// Fades buttons on hover
+	// Feels a little hacky at the moment, will find a better solution
+	void Program::FadeInOut(Button& _button) {
+		if (_button.Hovered(m_Window)) {
+			if (_button.GetOpacity() < 255) {
+				if (_button.GetOpacity() > 245) {
+					_button.SetOpacity(255);
+					return;
+				}
+
+				if (_button.GetOpacity() < 100)
+					_button.SetOpacity(_button.GetOpacity() + 20);
+				else
+					_button.SetOpacity(_button.GetOpacity() + 10);
+			}
+		}
+		else if (_button.GetOpacity() > 0) {
+			if (_button.GetOpacity() <= 10) {
+				_button.SetOpacity(0);
+				return;
+			}
+			_button.SetOpacity(_button.GetOpacity() - 10);
+		}
+	}
+
 	// Updates proprierties on every frame
 	void Program::Update() {
-
+		FadeInOut(m_ButtonPrev);
+		FadeInOut(m_ButtonNext);
 	}
 
 	// Renders the screen every frame | Drawn in order
@@ -271,6 +315,8 @@ namespace jlyn {
 		
 		m_LeftPad.Draw(m_Window);
 		m_RightPad.Draw(m_Window);
+
+		m_TopPad.Draw(m_Window);
 
 		m_ButtonNext.Draw(m_Window);
 		m_ButtonPrev.Draw(m_Window);

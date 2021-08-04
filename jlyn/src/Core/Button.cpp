@@ -50,6 +50,12 @@ namespace jlyn {
 		m_Button.setPosition(_window->mapPixelToCoords(sf::Vector2i{ _position }));
 	}
 
+	void Button::SetOpacity(sf::Uint8 _opacity) {
+		sf::Color modifiedAlpha = m_Button.getFillColor();
+		modifiedAlpha.a = _opacity;
+		SetColor(modifiedAlpha);
+	}
+
 	void Button::SetColor(sf::Color& _color) {
 		m_Button.setFillColor(_color);
 	}
@@ -64,6 +70,14 @@ namespace jlyn {
 		return false;
 	}
 
+	float Button::GetOpacity() {
+		return m_Button.getFillColor().a;
+	}
+
+	sf::Color Button::GetColor() {
+		return m_Button.getFillColor();
+	}
+	
 	sf::Vector2f Button::GetSize() {
 		return m_Button.getSize();
 	}

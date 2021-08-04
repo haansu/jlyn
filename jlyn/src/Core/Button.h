@@ -20,7 +20,12 @@ namespace jlyn {
 		void SetColor(sf::Color& _color);
 		void LoadTexture(std::string _path);
 
+		void SetOpacity(sf::Uint8 _opacity);
+
 		bool Hovered(sf::RenderWindow*& _window);
+
+		float GetOpacity();
+		sf::Color GetColor();
 
 		sf::Vector2f GetSize();
 		sf::Vector2f GetPosition();
