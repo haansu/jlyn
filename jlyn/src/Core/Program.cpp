@@ -10,6 +10,7 @@ namespace jlyn {
 		m_BackgroundColor = sf::Color(25, 25, 25, 255);
 
 		m_ZoomLevel = 1;
+		m_ZoomSmooth = 1;
 
 		int lastSlashIndex = m_Path.find_last_of('\\', m_Path.size() - 1);
 		CORE_INFO("Last {0}", lastSlashIndex);
@@ -116,8 +117,6 @@ namespace jlyn {
 				if (m_ZoomLevel < 3 && m_Event.mouseWheel.delta > 0)
 					m_ZoomLevel += 0.1;
 				CORE_TRACE("Zoom Level: {0}", m_ZoomLevel);
-
-				ImageRenderer(m_FilePaths[m_PathIndex]);
 				break;
 			}
 
@@ -139,7 +138,7 @@ namespace jlyn {
 				m_Window->setView(m_View);
 
 				ButtonUpdate(m_Window);
-				ImageRenderer(m_FilePaths[m_PathIndex]);
+				ImageUpdate();
 			}
 			}
 		}
@@ -214,8 +213,8 @@ namespace jlyn {
 		if (!(image.loadFromFile(_path)))
 			CORE_ERROR("Cannot load image from: {0}", _path);
 
-		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.85f * m_ZoomLevel;
-		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.85f * m_ZoomLevel;
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(image.getSize().x)) * 0.85f * m_ZoomSmooth;
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(image.getSize().y)) * 0.85f * m_ZoomSmooth;
 
 		if (scaleX < scaleY)
 			m_Image->setScale(scaleX, scaleX);
@@ -231,6 +230,25 @@ namespace jlyn {
 		int imgOffsetY = (m_Window->getSize().y + 50 - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
 
 		m_Image->setPosition(m_Window->mapPixelToCoords(sf::Vector2{ imgOffsetX, imgOffsetY }));
+	}
+
+	void Program::ImageUpdate() {
+
+		float scaleX = (static_cast<float>(m_Window->getSize().x) / static_cast<float>(m_Image->getTexture()->getSize().x)) * 0.85f * m_ZoomSmooth;
+		float scaleY = (static_cast<float>(m_Window->getSize().y) / static_cast<float>(m_Image->getTexture()->getSize().y)) * 0.85f * m_ZoomSmooth;
+
+		if (scaleX < scaleY)
+			m_Image->setScale(scaleX, scaleX);
+		else
+			m_Image->setScale(scaleY, scaleY);
+
+		m_Texture.setSmooth(true);
+
+		// Offsetting the image so it's always centered
+		int imgOffsetX = (m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2;
+		int imgOffsetY = (m_Window->getSize().y + 50 - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
+
+		m_Image->setPosition(sf::Vector2f(imgOffsetX, imgOffsetY));
 	}
 
 	void Program::ButtonUpdate(sf::RenderWindow*& _window) {
@@ -279,7 +297,7 @@ namespace jlyn {
 	}
 
 	// Fades buttons on hover
-	// Feels a little hacky at the moment, will find a better solution
+	// Feels a little hacky, will find a better solution
 	void Program::FadeInOut(Button& _button) {
 		if (_button.Hovered(m_Window)) {
 			if (_button.GetOpacity() < 255) {
@@ -300,6 +318,12 @@ namespace jlyn {
 				return;
 			}
 			_button.SetOpacity(_button.GetOpacity() - 10);
+		}
+		
+		if (m_ZoomLevel != m_ZoomSmooth) {
+			float zoomDelta = m_ZoomLevel - m_ZoomSmooth;
+			m_ZoomSmooth += (zoomDelta / 10);
+			ImageUpdate();
 		}
 	}
 

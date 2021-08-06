@@ -21,6 +21,7 @@ namespace jlyn {
 		bool IsSupported(std::filesystem::directory_entry _files);
 
 		void ImageRenderer(std::string _path);
+		void ImageUpdate();
 		void ButtonUpdate(sf::RenderWindow*& _window);
 
 		void PrevImage();
@@ -34,6 +35,7 @@ namespace jlyn {
 		std::string m_Title;
 		bool m_Resizeable;
 		float m_ZoomLevel;
+		float m_ZoomSmooth;
 
 		std::string m_Path;
 		std::string m_ImagePath;
