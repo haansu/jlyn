@@ -142,9 +142,9 @@ namespace jlyn {
 				if (m_ZoomLevel > 0.3 && m_Event.mouseWheel.delta < 0) {
 					m_ZoomLevel -= 0.1;
 
-					if (m_OffsetRecenter.x != 0 && m_ZoomLevel > 1)
+					if (m_OffsetRecenter.x != 0 && m_ZoomLevel > 1 && m_Offset.x != 0)
 						m_Offset.x -= m_OffsetRecenter.x;
-					if (m_OffsetRecenter.y != 0 && m_ZoomLevel > 1)
+					if (m_OffsetRecenter.y != 0 && m_ZoomLevel > 1 && m_Offset.x != 0)
 						m_Offset.y -= m_OffsetRecenter.y;
 
 					// Offsets reset when there's no zoom
@@ -158,6 +158,7 @@ namespace jlyn {
 				}
 				if (m_ZoomLevel < 3 && m_Event.mouseWheel.delta > 0) {
 					m_ZoomLevel += 0.1;
+					m_OffsetRecenter.y = m_Offset.y / ((m_ZoomLevel - 1) * 10);
 				}
 
 				m_ZoomDelta = m_ZoomLevel - m_ZoomSmooth;
