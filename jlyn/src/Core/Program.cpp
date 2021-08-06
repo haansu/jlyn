@@ -204,8 +204,10 @@ namespace jlyn {
 	void Program::ImageRenderer(std::string _path) {
 		CORE_TRACE("Loading immage from path: {0}", _path);
 
-		delete m_Image;
+		m_ZoomSmooth = 1;
+		m_ZoomLevel  = 1;
 
+		delete m_Image;
 		m_Image = new sf::Sprite;
 
 		sf::Image image;
@@ -313,13 +315,21 @@ namespace jlyn {
 			}
 		}
 		else if (_button.GetOpacity() > 0) {
-			if (_button.GetOpacity() <= 10) {
-				_button.SetOpacity(0);
-				return;
-			}
-			_button.SetOpacity(_button.GetOpacity() - 10);
+			if (m_ZoomLevel > 1) {
+				if (_button.GetOpacity() <= 10) {
+					_button.SetOpacity(0);
+					return;
+				}
+
+				_button.SetOpacity(_button.GetOpacity() - 10);
+			} else if (_button.GetOpacity() >= 100)
+				_button.SetOpacity(_button.GetOpacity() - 10);
 		}
 		
+		if (!_button.Hovered(m_Window) && _button.GetOpacity() < 100 && m_ZoomLevel <= 1) {
+			_button.SetOpacity(_button.GetOpacity() + 10);
+		}
+
 		if (m_ZoomLevel != m_ZoomSmooth) {
 			float zoomDelta = m_ZoomLevel - m_ZoomSmooth;
 			m_ZoomSmooth += (zoomDelta / 10);
