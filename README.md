@@ -17,6 +17,5 @@ On windows it can be used with the open with command in any directory as long as
 
 <h3> Screenshots: </h3>
 
-<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Image1.PNG" alt="Screenshot1" /></p>
-<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Image2.PNG" alt="Screenshot2" /></p>
-<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Smaller.PNG" alt="Screenshot3" /></p>
+<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Image1.png" alt="Screenshot1" /></p>
+<p><img src="https://raw.githubusercontent.com/haansu/jlyn/master/screenshots/Image2.png" alt="Screenshot2" /></p>
