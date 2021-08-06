@@ -12,6 +12,8 @@ namespace jlyn {
 		m_ZoomLevel = 1;
 		m_ZoomSmooth = 1;
 
+		m_Offset = sf::Vector2i(0, 0);
+
 		int lastSlashIndex = m_Path.find_last_of('\\', m_Path.size() - 1);
 		CORE_INFO("Last {0}", lastSlashIndex);
 		m_Path = m_Path.substr(0, lastSlashIndex + 1);
@@ -77,6 +79,7 @@ namespace jlyn {
 			}
 
 			case sf::Event::KeyPressed: {
+				
 				CORE_TRACE("Key pressed: {0}", m_Event.text.unicode);
 				if (m_Event.key.code == sf::Keyboard::Escape) {
 					m_Window->close();
@@ -84,16 +87,40 @@ namespace jlyn {
 					break;
 				}
 
+				// Adds offset when typing and records the offset value necesary for every zoom out
+				// Also changes immages if no zoom
 				if (m_Event.key.code == sf::Keyboard::Left) {
-					PrevImage();
-					break;
+					if (m_ZoomLevel <= 1)
+						PrevImage();
+					else {
+						m_Offset.x += 25;
+						if (m_ZoomLevel != 1)
+							m_OffsetRecenter.x = m_Offset.x / ((m_ZoomLevel - 1) * 10);
+					}
 				}
 
 				if (m_Event.key.code == sf::Keyboard::Right) {
-					NextImage();
-					break;
+					if(m_ZoomLevel <= 1)
+						NextImage();
+					else {
+						m_Offset.x -= 25;
+						if (m_ZoomLevel != 1)
+						m_OffsetRecenter.x = m_Offset.x / ((m_ZoomLevel - 1) * 10);
+					}
 				}
 
+				if (m_Event.key.code == sf::Keyboard::Up) {
+					if (m_ZoomLevel > 1)
+						m_Offset.y += 25;
+					m_OffsetRecenter.y = m_Offset.y / ((m_ZoomLevel - 1) * 10);
+				}
+
+				if (m_Event.key.code == sf::Keyboard::Down) {
+					if (m_ZoomLevel > 1)
+						m_Offset.y -= 25;
+					m_OffsetRecenter.y = m_Offset.y / ((m_ZoomLevel - 1) * 10);
+				}
+				ImageUpdate();
 				break;
 			}
 
@@ -112,10 +139,29 @@ namespace jlyn {
 			}
 
 			case sf::Event::MouseWheelMoved: {
-				if (m_ZoomLevel > 0.3 && m_Event.mouseWheel.delta < 0)
+				if (m_ZoomLevel > 0.3 && m_Event.mouseWheel.delta < 0) {
 					m_ZoomLevel -= 0.1;
-				if (m_ZoomLevel < 3 && m_Event.mouseWheel.delta > 0)
+
+					if (m_OffsetRecenter.x != 0 && m_ZoomLevel > 1)
+						m_Offset.x -= m_OffsetRecenter.x;
+					if (m_OffsetRecenter.y != 0 && m_ZoomLevel > 1)
+						m_Offset.y -= m_OffsetRecenter.y;
+
+					// Offsets reset when there's no zoom
+					if (m_ZoomLevel == 1) {
+						m_Offset.y = 0;
+						m_Offset.x = 0;
+						m_OffsetRecenter.x = 0;
+						m_OffsetRecenter.y = 0;
+					}
+
+				}
+				if (m_ZoomLevel < 3 && m_Event.mouseWheel.delta > 0) {
 					m_ZoomLevel += 0.1;
+				}
+
+				m_ZoomDelta = m_ZoomLevel - m_ZoomSmooth;
+
 				CORE_TRACE("Zoom Level: {0}", m_ZoomLevel);
 				break;
 			}
@@ -207,6 +253,8 @@ namespace jlyn {
 		m_ZoomSmooth = 1;
 		m_ZoomLevel  = 1;
 
+		m_Offset = sf::Vector2i(0, 0);
+
 		delete m_Image;
 		m_Image = new sf::Sprite;
 
@@ -244,11 +292,8 @@ namespace jlyn {
 		else
 			m_Image->setScale(scaleY, scaleY);
 
-		m_Texture.setSmooth(true);
-
-		// Offsetting the image so it's always centered
-		int imgOffsetX = (m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2;
-		int imgOffsetY = (m_Window->getSize().y + 50 - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
+		int imgOffsetX = ((m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2) + m_Offset.x;
+		int imgOffsetY = ((m_Window->getSize().y + 50 - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2) + m_Offset.y;
 
 		m_Image->setPosition(sf::Vector2f(imgOffsetX, imgOffsetY));
 	}
@@ -329,18 +374,20 @@ namespace jlyn {
 		if (!_button.Hovered(m_Window) && _button.GetOpacity() < 100 && m_ZoomLevel <= 1) {
 			_button.SetOpacity(_button.GetOpacity() + 10);
 		}
-
-		if (m_ZoomLevel != m_ZoomSmooth) {
-			float zoomDelta = m_ZoomLevel - m_ZoomSmooth;
-			m_ZoomSmooth += (zoomDelta / 10);
-			ImageUpdate();
-		}
 	}
 
 	// Updates proprierties on every frame
 	void Program::Update() {
 		FadeInOut(m_ButtonPrev);
 		FadeInOut(m_ButtonNext);
+
+		// Smooth zooming
+		if (m_ZoomLevel != m_ZoomSmooth) {
+			m_ZoomSmooth += (m_ZoomDelta / 10);
+			if (m_ZoomSmooth < m_ZoomLevel + 0.01 && m_ZoomSmooth > m_ZoomLevel - 0.01)
+				m_ZoomSmooth = m_ZoomLevel;
+			ImageUpdate();
+		}
 	}
 
 	// Renders the screen every frame | Drawn in order

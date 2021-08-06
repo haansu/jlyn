@@ -36,10 +36,13 @@ namespace jlyn {
 		bool m_Resizeable;
 		float m_ZoomLevel;
 		float m_ZoomSmooth;
+		float m_ZoomDelta;
 
 		std::string m_Path;
 		std::string m_ImagePath;
 		std::string m_ImageDirPath;
+		sf::Vector2i m_Offset;
+		sf::Vector2i m_OffsetRecenter;
 
 		std::vector<std::string> m_FilePaths;
 		unsigned int m_PathIndex;
