@@ -59,7 +59,6 @@ namespace jlyn {
 
 		Pad m_LeftPad;
 		Pad m_RightPad;
-		Pad m_TopPad;
 
 		sf::Sprite* m_Image;
 		sf::Texture m_Texture;

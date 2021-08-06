@@ -203,7 +203,6 @@ namespace jlyn {
 		// Left and right pads
 		m_LeftPad.Init("Left-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), m_BackgroundColor);
 		m_RightPad.Init("Right-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), m_BackgroundColor);
-		m_TopPad.Init("Top-Pad", sf::Vector2f(100.0f, 100.0f), sf::Vector2f(0.0f, 0.0f), sf::Color(15, 15, 15, 255));
 	}
 
 	// Scans the directory for all supported image files
@@ -277,7 +276,7 @@ namespace jlyn {
 
 		// Offsetting the image so it's always centered
 		int imgOffsetX = (m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2;
-		int imgOffsetY = (m_Window->getSize().y + 50 - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
+		int imgOffsetY = (m_Window->getSize().y - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2;
 
 		m_Image->setPosition(m_Window->mapPixelToCoords(sf::Vector2{ imgOffsetX, imgOffsetY }));
 	}
@@ -293,7 +292,7 @@ namespace jlyn {
 			m_Image->setScale(scaleY, scaleY);
 
 		int imgOffsetX = ((m_Window->getSize().x - (m_Image->getTexture()->getSize().x * m_Image->getScale().x)) / 2) + m_Offset.x;
-		int imgOffsetY = ((m_Window->getSize().y + 50 - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2) + m_Offset.y;
+		int imgOffsetY = ((m_Window->getSize().y - (m_Image->getTexture()->getSize().y * m_Image->getScale().x)) / 2) + m_Offset.y;
 
 		m_Image->setPosition(sf::Vector2f(imgOffsetX, imgOffsetY));
 	}
@@ -301,11 +300,11 @@ namespace jlyn {
 	void Program::ButtonUpdate(sf::RenderWindow*& _window) {
 		sf::Vector2i buttonPrevPos;
 		buttonPrevPos.x = 0;
-		buttonPrevPos.y = ((float)_window->getSize().y + 50) / 2 - m_ButtonPrev.GetSize().y / 2;
+		buttonPrevPos.y = ((float)_window->getSize().y) / 2 - m_ButtonPrev.GetSize().y / 2;
 
 		sf::Vector2i buttonNextPos;
 		buttonNextPos.x = (float)_window->getSize().x - m_ButtonNext.GetSize().x;
-		buttonNextPos.y = ((float)_window->getSize().y + 50) / 2 - m_ButtonNext.GetSize().y / 2;
+		buttonNextPos.y = ((float)_window->getSize().y) / 2 - m_ButtonNext.GetSize().y / 2;
 
 		m_ButtonPrev.SetPosition(sf::Vector2f(buttonPrevPos));
 		m_ButtonNext.SetPosition(sf::Vector2f(buttonNextPos));
@@ -319,9 +318,6 @@ namespace jlyn {
 
 		m_LeftPad.SetPositionRel(_window, sf::Vector2i(0.0f, 0.0f));
 		m_RightPad.SetPositionRel(_window, sf::Vector2i(_window->getSize().x - padSize.x, 0.0f));
-
-		m_TopPad.SetPositionRel(_window, sf::Vector2i(0.0f, 0.0f));
-		m_TopPad.SetSize(sf::Vector2f((float)_window->getSize().x, 50));
 
 		m_LeftPad.SetSize(padSize);
 		m_RightPad.SetSize(padSize);
@@ -396,8 +392,6 @@ namespace jlyn {
 		
 		m_LeftPad.Draw(m_Window);
 		m_RightPad.Draw(m_Window);
-
-		m_TopPad.Draw(m_Window);
 
 		m_ButtonNext.Draw(m_Window);
 		m_ButtonPrev.Draw(m_Window);
