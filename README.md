@@ -1,7 +1,7 @@
 # JLyn
 
 JLyn is a simple image viewer program written in C++ using SFML. <br/>
-Can be used on windows using the binary files or by compiling the code with premake (script available). <br/>
+Can be used on windows using the binary files or by compiling the code. Premake script available for windows only. <br/>
 On windows it can be used with the open with command in any directory as long as the file is supported. <br/>
 
 <h3>Supported formats:</h3>
