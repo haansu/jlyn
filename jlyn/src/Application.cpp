@@ -1,12 +1,18 @@
 #include <JLyn.h>
 
+
 // Entry Point of the Program
 int main(int argc, char** argv) {
+
+	#ifdef JLYN_RELEASE or JLYN_DIST
+		ShowWindow(GetConsoleWindow(), SW_HIDE);
+	#endif
+
 	jlyn::Log::Init();
 
 	for (int i = 0; i < argc; i++)
 		CORE_INFO("Arguement-{0}: {1}", i, argv[i]);
-	
+
 	// Checks if application has been run with a filepath arguement and gives default arguement otherwise
 	char* argFile;
 	if (argc < 2)

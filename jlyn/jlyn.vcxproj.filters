@@ -4,26 +4,43 @@
     <Filter Include="Core">
       <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{E704880B-530E-887C-DC89-9E7C4892937C}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Button.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Entity.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Pad.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Core\Program.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\JLynCore.h" />
-    <ClInclude Include="src\SFML.h" />
-    <ClInclude Include="src\Log\Log.h" />
-    <ClInclude Include="src\Core\Button.h" />
     <ClInclude Include="src\JLyn.h" />
-    <ClInclude Include="src\Core\Entity.h" />
-    <ClInclude Include="src\Core\Pad.h" />
+    <ClInclude Include="src\JLynCore.h" />
+    <ClInclude Include="src\Log\Log.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SFML.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Core\Button.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Pad.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Core\Program.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Log\Log.cpp" />
-    <ClCompile Include="src\Core\Button.cpp" />
-    <ClCompile Include="src\Core\Pad.cpp" />
+    <ClCompile Include="src\Log\Log.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@ namespace jlyn {
 		m_Path = _path;
 		m_BackgroundColor = sf::Color(25, 25, 25, 255);
 
+		m_ConsoleVisible = false;
+
 		m_ZoomLevel = 1;
 		m_ZoomSmooth = 1;
 
@@ -96,6 +98,7 @@ namespace jlyn {
 						m_Offset.x += 25;
 						if (m_ZoomLevel != 1)
 							m_OffsetRecenter.x = m_Offset.x / ((m_ZoomLevel - 1) * 10);
+						ImageUpdate();
 					}
 				}
 
@@ -106,6 +109,7 @@ namespace jlyn {
 						m_Offset.x -= 25;
 						if (m_ZoomLevel != 1)
 						m_OffsetRecenter.x = m_Offset.x / ((m_ZoomLevel - 1) * 10);
+						ImageUpdate();
 					}
 				}
 
@@ -113,14 +117,27 @@ namespace jlyn {
 					if (m_ZoomLevel > 1)
 						m_Offset.y += 25;
 					m_OffsetRecenter.y = m_Offset.y / ((m_ZoomLevel - 1) * 10);
+					ImageUpdate();
 				}
 
 				if (m_Event.key.code == sf::Keyboard::Down) {
 					if (m_ZoomLevel > 1)
 						m_Offset.y -= 25;
 					m_OffsetRecenter.y = m_Offset.y / ((m_ZoomLevel - 1) * 10);
+					ImageUpdate();
 				}
-				ImageUpdate();
+
+				if (m_Event.key.code == sf::Keyboard::Insert) {
+					if (m_ConsoleVisible) {
+						m_ConsoleVisible = false;
+						ShowWindow(GetConsoleWindow(), SW_HIDE);
+					}
+					else {
+						m_ConsoleVisible = true;
+						ShowWindow(GetConsoleWindow(), SW_SHOW);
+					}
+				}
+
 				break;
 			}
 

@@ -34,6 +34,9 @@ namespace jlyn {
 	private:
 		std::string m_Title;
 		bool m_Resizeable;
+		
+		bool m_ConsoleVisible;
+		
 		float m_ZoomLevel;
 		float m_ZoomSmooth;
 		float m_ZoomDelta;
